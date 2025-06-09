@@ -3,7 +3,7 @@ import certifi
 from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import Depends
-from pydantic import Field, field_validator
+from pydantic import Field
 from functools import lru_cache
 from typing import Annotated, List, Literal, Union, cast
 from pydantic_settings import BaseSettings

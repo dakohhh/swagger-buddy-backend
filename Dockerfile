@@ -66,13 +66,17 @@ RUN useradd -m -s /bin/bash appuser
 # Set working directory
 WORKDIR /app
 
-# Copy dependencies from builder
+# Copy dependencies from builder and install them
 COPY --from=builder /app/requirements.txt .
+
+# Install Python dependencies from requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files from builder
 COPY --from=builder /app/migrations ./migrations
 COPY --from=builder /app/settings ./settings
 COPY --from=builder /app/alembic.ini ./alembic.ini
 COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 # Copy application code from builder
 COPY --from=builder --chown=appuser:appuser /app/app ./app

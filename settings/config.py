@@ -136,4 +136,4 @@ settings = get_settings()
 SettingsDep =  Annotated[ConfigType, Depends(get_settings)]
 
 # Uncomment the line below to check the settings set
-print(settings.CORS_ORIGINS_PROCESSED)
+# print(settings.CORS_ORIGINS_PROCESSED)

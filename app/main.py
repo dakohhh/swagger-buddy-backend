@@ -26,6 +26,15 @@ def register_routers(app: FastAPI):
     # app.include_router(auth_router_v1)
     # Add more routers here as the application grows
 
+    # Debug endpoint to check CORS configuration
+    @app.get("/debug/cors")
+    async def debug_cors():
+        return {
+            "cors_origins": settings.CORS_ORIGINS_PROCESSED,
+            "environment": settings.ENVIRONMENT,
+            "raw_cors_origins": settings.CORS_ORIGINS
+        }
+
 
 def create_app() -> FastAPI:
     """

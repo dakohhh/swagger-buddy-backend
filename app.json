@@ -1,0 +1,143 @@
+{
+    "base_url": "https://api-dev.eatandvibeml.codeforgex.dev/",
+    "sections": [
+        {
+            "name": "Health",
+            "description": "Endpoints related to checking the service health status.",
+            "endpoints": [
+                {
+                    "name": "Health Check",
+                    "url_of_endpoint": "/health",
+                    "description": "Checks the health status of the Eat and Vibe ML SERVER. This endpoint is used to ensure the server is up and running without issues.",
+                    "body": null,
+                    "headers": null,
+                    "path_parameters": null,
+                    "query_parameters": null,
+                    "code_examples": {
+                        "curl": {
+                            "name": "curl",
+                            "code": "curl -X GET 'https://api-dev.eatandvibeml.codeforgex.dev/health'"
+                        },
+                        "python": {
+                            "name": "python",
+                            "code": "import requests\n\nresponse = requests.get('https://api-dev.eatandvibeml.codeforgex.dev/health')\nif response.status_code == 200:\n    print('Service is healthy')\nelse:\n    print('Service is down', response.status_code)"
+                        },
+                        "javascript": {
+                            "name": "javascript",
+                            "code": "fetch('https://api-dev.eatandvibeml.codeforgex.dev/health')\n  .then(response => {\n    if (response.ok) return response.json();\n    throw new Error('Service is down');\n  })\n  .then(data => console.log('Service is healthy'))\n  .catch(error => console.error('Error:', error));"
+                        },
+                        "typescript": {
+                            "name": "typescript",
+                            "code": "import axios, { AxiosResponse } from 'axios';\n\nasync function checkHealth() {\n    try {\n        const response: AxiosResponse = await axios.get('https://api-dev.eatandvibeml.codeforgex.dev/health');\n        console.log('Service is healthy');\n    } catch (error) {\n        console.error('Service is down', error);\n    }\n}\n\ncheckHealth();"
+                        },
+                        "flutter": {
+                            "name": "flutter",
+                            "code": "import 'package:dio/dio.dart';\n\nvoid checkHealth() async {\n  final dio = Dio();\n  try {\n    final response = await dio.get('https://api-dev.eatandvibeml.codeforgex.dev/health');\n    if (response.statusCode == 200) {\n      print('Service is healthy');\n    }\n  } catch (error) {\n    print('Service is down: $error');\n  }\n}\n\ncheckHealth();"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Recommendation",
+            "description": "Endpoints for generating recommendations using the HNSWlib algorithm.",
+            "endpoints": [
+                {
+                    "name": "Recommend Users HNSW",
+                    "url_of_endpoint": "/recommendation/hns/user",
+                    "description": "Generate user recommendations using the HNSWlib algorithm. This endpoint provides recommendations based on nearby users. If no nearby users are found, it returns an empty array. The recommendations are provided one at a time.",
+                    "body": [
+                        {
+                            "name": "user_id",
+                            "type": "string",
+                            "descriptive_value": "The unique identifier for the user for whom recommendations are to be generated. Example: '12345'.",
+                            "required": true
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "name": "x-key",
+                            "type": "string",
+                            "descriptive_value": "API Key required for accessing this endpoint. This should be set in the request headers.",
+                            "required": true
+                        }
+                    ],
+                    "path_parameters": null,
+                    "query_parameters": null,
+                    "code_examples": {
+                        "curl": {
+                            "name": "curl",
+                            "code": "curl -X POST 'https://api-dev.eatandvibeml.codeforgex.dev/recommendation/hns/user' \\\n -H 'Content-Type: application/json' \\\n -H 'x-key: YOUR_API_KEY' \\\n -d '{\"user_id\": \"12345\"}'"
+                        },
+                        "python": {
+                            "name": "python",
+                            "code": "import requests\n\nheaders = {\n    'x-key': 'YOUR_API_KEY',\n    'Content-Type': 'application/json',\n}\njson_data = {\n    'user_id': '12345',\n}\n\nresponse = requests.post('https://api-dev.eatandvibeml.codeforgex.dev/recommendation/hns/user', headers=headers, json=json_data)\nif response.status_code == 200:\n    print('Recommendation:', response.json())\nelse:\n    print('Error:', response.status_code, response.json())"
+                        },
+                        "javascript": {
+                            "name": "javascript",
+                            "code": "fetch('https://api-dev.eatandvibeml.codeforgex.dev/recommendation/hns/user', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n    'x-key': 'YOUR_API_KEY'\n  },\n  body: JSON.stringify({ user_id: '12345' })\n})\n  .then(response => response.json())\n  .then(data => console.log('Recommendation:', data))\n  .catch((error) => console.error('Error:', error));"
+                        },
+                        "typescript": {
+                            "name": "typescript",
+                            "code": "import axios, { AxiosResponse } from 'axios';\n\nasync function getRecommendation() {\n    try {\n        const response: AxiosResponse = await axios.post('https://api-dev.eatandvibeml.codeforgex.dev/recommendation/hns/user', {\n            user_id: '12345'\n        }, {\n            headers: {\n                'x-key': 'YOUR_API_KEY',\n                'Content-Type': 'application/json'\n            }\n        });\n        console.log('Recommendation:', response.data);\n    } catch (error) {\n        console.error('Error:', error);\n    }\n}\n\ngetRecommendation();"
+                        },
+                        "flutter": {
+                            "name": "flutter",
+                            "code": "import 'package:dio/dio.dart';\n\nvoid getRecommendation() async {\n  final dio = Dio();\n  try {\n    final response = await dio.post(\n      'https://api-dev.eatandvibeml.codeforgex.dev/recommendation/hns/user',\n      options: Options(headers: {\n        'x-key': 'YOUR_API_KEY',\n        'Content-Type': 'application/json',\n      }),\n      data: {\n        'user_id': '12345',\n      },\n    );\n    print('Recommendation: ${response.data}');\n  } catch (error) {\n    print('Error: $error');\n  }\n}\n\ngetRecommendation();"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Authentication",
+            "description": "Endpoints related to credential validation and generation of API keys.",
+            "endpoints": [
+                {
+                    "name": "Generate Key",
+                    "url_of_endpoint": "/auth/generate-key/",
+                    "description": "Generate an API key if the provided credentials are correct. This endpoint is essential for authorization and accessing restricted endpoints within the service.",
+                    "body": [
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "descriptive_value": "The email of the user requesting the API key. Must be a valid email address. Example: 'user@example.com'.",
+                            "required": true
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "descriptive_value": "The password of the user requesting the API key. This should be the corresponding password for the provided email.",
+                            "required": true
+                        }
+                    ],
+                    "headers": null,
+                    "path_parameters": null,
+                    "query_parameters": null,
+                    "code_examples": {
+                        "curl": {
+                            "name": "curl",
+                            "code": "curl -X POST 'https://api-dev.eatandvibeml.codeforgex.dev/auth/generate-key/' \\\n -H 'Content-Type: application/json' \\\n -d '{\"email\": \"user@example.com\", \"password\": \"userpassword\"}'"
+                        },
+                        "python": {
+                            "name": "python",
+                            "code": "import requests\n\njson_data = {\n    'email': 'user@example.com',\n    'password': 'userpassword',\n}\n\nresponse = requests.post('https://api-dev.eatandvibeml.codeforgex.dev/auth/generate-key/', json=json_data)\nif response.status_code == 200:\n    api_key = response.json().get('api_key')\n    print('Generated API Key:', api_key)\nelse:\n    print('Error:', response.json())"
+                        },
+                        "javascript": {
+                            "name": "javascript",
+                            "code": "fetch('https://api-dev.eatandvibeml.codeforgex.dev/auth/generate-key/', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({ email: 'user@example.com', password: 'userpassword' })\n})\n  .then(response => response.json())\n  .then(data => console.log('Generated API Key:', data.api_key))\n  .catch((error) => console.error('Error:', error));"
+                        },
+                        "typescript": {
+                            "name": "typescript",
+                            "code": "import axios, { AxiosResponse } from 'axios';\n\nasync function generateApiKey() {\n    try {\n        const response: AxiosResponse = await axios.post('https://api-dev.eatandvibeml.codeforgex.dev/auth/generate-key/', {\n            email: 'user@example.com',\n            password: 'userpassword'\n        }, {\n            headers: {\n                'Content-Type': 'application/json'\n            }\n        });\n        console.log('Generated API Key:', response.data.api_key);\n    } catch (error) {\n        console.error('Error:', error.response.data);\n    }\n}\n\ngenerateApiKey();"
+                        },
+                        "flutter": {
+                            "name": "flutter",
+                            "code": "import 'package:dio/dio.dart';\n\nvoid generateApiKey() async {\n  final dio = Dio();\n  try {\n    final response = await dio.post(\n      'https://api-dev.eatandvibeml.codeforgex.dev/auth/generate-key/',\n      options: Options(headers: {\n        'Content-Type': 'application/json',\n      }),\n      data: {\n        'email': 'user@example.com',\n        'password': 'userpassword',\n      },\n    );\n    print('Generated API Key: ${response.data['api_key']}');\n  } catch (error) {\n    print('Error: $error');\n  }\n}\n\ngenerateApiKey();"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

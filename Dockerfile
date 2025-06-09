@@ -37,6 +37,13 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     poetry install --no-interaction --no-root --only main && \
     poetry export -f requirements.txt --output requirements.txt
 
+# Copy application files to builder stage
+COPY ./migrations ./migrations
+COPY ./settings ./settings
+COPY ./app ./app
+COPY ./alembic.ini ./alembic.ini
+COPY ./entrypoint.sh ./entrypoint.sh
+
 # Stage 2: Runtime
 FROM python:3.12-slim
 
@@ -61,10 +68,17 @@ WORKDIR /app
 
 # Copy dependencies from builder
 COPY --from=builder /app/requirements.txt .
+COPY --from=builder /app/migrations ./migrations
+COPY --from=builder /app/settings ./settings
+COPY --from=builder /app/alembic.ini ./alembic.ini
+COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
-# Copy application code
-COPY --chown=appuser:appuser ./app ./app
+# Copy application code from builder
+COPY --from=builder --chown=appuser:appuser /app/app ./app
+
+# Make entrypoint executable
+RUN chmod +x ./entrypoint.sh
 
 # Switch to non-root user
 USER appuser
@@ -72,9 +86,5 @@ USER appuser
 # Expose port
 EXPOSE 4000
 
-# Set healthcheck
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:4000/health || exit 1
-
 # Command to run the application
-CMD ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "4000"]
+ENTRYPOINT [ "./entrypoint.sh" ]

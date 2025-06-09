@@ -39,7 +39,7 @@ alembic upgrade head
 # Start Uvicorn
 echo "Starting Uvicorn..."
 
-PORT=4000
+PORT=9000
 HOST=0.0.0.0
 WORKERS=3
 TIMEOUT=60

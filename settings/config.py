@@ -3,7 +3,7 @@ import certifi
 from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import Depends
-from pydantic import Field
+from pydantic import Field, field_validator
 from functools import lru_cache
 from typing import Annotated, List, Literal, Union, cast
 from pydantic_settings import BaseSettings
@@ -57,6 +57,7 @@ class GlobalConfig(BaseSettings):
     ACCESS_TOKEN_JWT_EXPIRES_IN: str = Field("1h", env="ACCESS_TOKEN_JWT_EXPIRES_IN")
     REFRESH_TOKEN_JWT_EXPIRES_IN: str = Field("30d", env="REFRESH_TOKEN_JWT_EXPIRES_IN")
     DEFAULT_DB_TOKEN_EXPIRY_DURATION: str = Field("5m", env="DEFAULT_DB_TOKEN_EXPIRY_DURATION")
+    CORS_ORIGINS: str = Field(..., env="CORS_ORIGINS")
 
     # API Documentation settings
     API_DOCS: APIDocsConfig = Field(default_factory=APIDocsConfig)
@@ -64,6 +65,22 @@ class GlobalConfig(BaseSettings):
     OPENAI_API_KEY: str = Field(..., env="OPENAI_API_KEY")
 
     DATABASE_URL: str = Field(..., env="DATABASE_URL")
+
+    @property
+    def CORS_ORIGINS_PROCESSED(self) -> List[str]:
+        """Parse CORS_ORIGINS from comma-separated string or JSON array"""
+        if isinstance(self.CORS_ORIGINS, str):
+            if not self.CORS_ORIGINS:
+                return []
+            # Handle comma-separated values
+            if self.CORS_ORIGINS.startswith('[') and self.CORS_ORIGINS.endswith(']'):
+                # It's already a JSON array string
+                import json
+                return json.loads(self.CORS_ORIGINS)
+            else:
+                # It's comma-separated, split it
+                return [origin.strip() for origin in self.CORS_ORIGINS.split(',') if origin.strip()]
+        return self.CORS_ORIGINS if isinstance(self.CORS_ORIGINS, list) else []
 
 
 class DevelopmentConfig(GlobalConfig):
@@ -74,7 +91,6 @@ class DevelopmentConfig(GlobalConfig):
     JWT_ALGORITHM: str = Field("HS256")
     REDIS_URI: str = Field("redis://localhost:6379/0", description="Local Redis instance")
     BASE_URL: str = "http://localhost:3000"
-    CORS_ORIGINS: List[str] = Field(["http://localhost:3000"], description="List of allowed CORS origins")
 
 class ProductionConfig(GlobalConfig):
     """Production environment specific configurations with stricter settings"""
@@ -84,7 +100,6 @@ class ProductionConfig(GlobalConfig):
     JWT_SECRET: str = Field(..., env="JWT_SECRET")
     JWT_ALGORITHM: str = Field("HS256")
     BASE_URL: str = Field(..., env="BASE_URL")
-    CORS_ORIGINS: List[str] = Field(..., env="CORS_ORIGINS", description="List of allowed CORS origins")
     
 
 
